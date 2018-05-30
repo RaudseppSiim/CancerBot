@@ -1,0 +1,30 @@
+{
+  "name": "cancerbot",
+  "version": "1.0.0",
+  "description": "Discord bot CancerBot",
+  "author": "Siimpiimhapupiim <raudseppsiim@gmail.com>",
+  "private": true,
+  "scripts": {
+    "start": "node controller.js"
+  },
+  "dependencies": {
+    "discord.js": "^11.3.2"
+  },
+  "main": "controller.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RaudseppSiim/CancerBot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discordbot",
+    "cancersquad"
+  ],
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/RaudseppSiim/CancerBot/issues"
+  },
+  "homepage": "https://github.com/RaudseppSiim/CancerBot#readme"
+}
