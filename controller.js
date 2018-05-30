@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-
+var playable = false;
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -18,6 +18,7 @@ client.on('message', msg => {
       msg.member.voiceChannel.join()
         .then(connection => { // Connection is an instance of VoiceConnection
           msg.reply('I have successfully connected to the channel!');
+          playable = true;
         })
         .catch(console.log);
     } else {
@@ -25,11 +26,12 @@ client.on('message', msg => {
     }
   }
   if (msg.content === 'c.leave') {
-      msg.member.voiceChannel.leave()
-        .then(connection =>{
-          msg.reply('I have left the Channel')
-        })
-        .catch(console.log);
+    msg.member.voiceChannel.leave();
+    msg.reply('I have successfully left the channel!');
+    playable = false;
+  }
+  if(msg.content ==='c.play' && playable === true) {
+
   }
 });
 
