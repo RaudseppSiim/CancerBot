@@ -1,0 +1,4 @@
+https://github.com/bdistin/OhGodMusicBot/blob/master/server.js
+https://www.npmjs.com/package/ytdl-core
+https://www.npmjs.com/package/spotify-web-api-js
+https://discord.js.org/#/docs/main/stable/topics/voice

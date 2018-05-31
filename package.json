@@ -8,10 +8,14 @@
     "start": "node controller.js"
   },
   "dependencies": {
-    "discord.js": "^11.3.2"
+    "discord.js": "^11.3.2",
+    "ffmpeg-binaries": "^3.2.2-3",
+    "opusscript": "0.0.6"
   },
   "main": "controller.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "ytdl-core": "^0.20.4"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RaudseppSiim/CancerBot.git"
