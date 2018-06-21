@@ -1,4 +1,7 @@
 https://github.com/bdistin/OhGodMusicBot/blob/master/server.js
 https://www.npmjs.com/package/ytdl-core
-https://www.npmjs.com/package/spotify-web-api-js
+https://www.npmjs.com/package/spotify-web-api-node
 https://discord.js.org/#/docs/main/stable/topics/voice
+https://www.npmjs.com/package/node-soundcloud
+spotify:user:soundrop:playlist:7vuWhXjchGOBwvHbHcnbq9
+spotify:user:djm%C3%A4nnik:playlist:14PDxH1609GgaodjRlb2nG

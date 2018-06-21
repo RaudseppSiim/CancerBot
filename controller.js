@@ -1,6 +1,23 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const yt = require('ytdl-core')
+const yt = require('ytdl-core');
+const ytpl = require('ytpl');
+var SpotifyWebApi = require('spotify-web-api-node');
+// credentials are optional
+var spotifyApi = new SpotifyWebApi({
+  clientId: 'aaf71c64462a4b94852079feb6d2db91',
+  clientSecret: 'aaecd5df54fe46b5932cc4107bbfb9c0'
+});
+spotifyApi.clientCredentialsGrant().then(
+function(data) {
+console.log(data.body);
+spotifyApi.setAccessToken(data.body['access_token']);
+},
+function(err) {
+console.log('Something went wrong!', err);
+}
+);
+console.log(spotifyApi);
 var playable = false;
 let queue = {};
 
@@ -37,6 +54,16 @@ let dispatcher;
   if(msg.content ==='c.play' && playable === true) {
 
     if (queue[msg.guild.id] === undefined) return msg.channel.sendMessage(`Add some songs to the queue first with c.add`);
+    if (msg.member.voiceChannel) {
+      msg.member.voiceChannel.join
+        .then(connection => { // Connection is an instance of VoiceConnection
+          msg.reply('I have successfully connected to the channel!');
+          playable = true;
+        })
+        .catch(console.log);
+    } else {
+      msg.reply('You need to join a voice channel first!');
+    }
 		if (!msg.guild.voiceConnection) return commands.join(msg).then(() => commands.play(msg));
 		if (queue[msg.guild.id].playing) return msg.channel.sendMessage('Already Playing');
 		queue[msg.guild.id].playing = true;
@@ -46,7 +73,6 @@ let dispatcher;
 			console.log(song);
 			if (song === undefined) return msg.channel.sendMessage('Queue is empty').then(() => {
 				queue[msg.guild.id].playing = false;
-				msg.member.voiceChannel.leave();
 			});
 			msg.channel.sendMessage(`Playing: **${song.title}** as requested by: **${song.requester}**`);
       dispatcher = msg.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : 5 });
@@ -84,22 +110,53 @@ let dispatcher;
 }
 
   if(msg.content.split(' ')[0] === 'c.add') {
+    var songscount;
 		let url = msg.content.split(' ')[1];
-	if (url == '' || url === undefined) return msg.channel.sendMessage(`You must add a YouTube video url, or id after c.add`);
+    if (url == '' || url === undefined) return msg.channel.sendMessage(`You must add a YouTube video url, or id after c.add`);
+    if(url.includes("spotify:")===true){
+      spotifyApi.getAudioFeaturesForTrack('7zc3J2gTnGj9AQrO9xxPqP')
+      .then(function(data) {
+        console.log(data.body);
+      }, function(err) {
+        done(err);
+      });
+    }
+    if(url.includes("list=")===true){
+      ytpl(url, function(err,playlist) {
+        if(err) console.log(err);
+        console.log(playlist);
+        for (var i = 0; i < playlist.total_items; i++) {
+          console.log(playlist.items[i]);
+          var iurl = playlist.items[i].url_simple;
+          console.log(iurl);
+          yt.getInfo(iurl, (err, info) => {
+      			if(err) return msg.channel.sendMessage('Invalid YouTube Link: ' + err);
+      			if (!queue.hasOwnProperty(msg.guild.id)) queue[msg.guild.id] = {}, queue[msg.guild.id].playing = false, queue[msg.guild.id].songs = [];
+      			queue[msg.guild.id].songs.push({url: iurl, title: info.title, requester: msg.author.username});
+            songsCount = songsCount+1;
+      		});
+        }
+        	msg.channel.sendMessage("added "+ songscount.toString() +" songs to the queue");
+      });
+    }
+    else {
 		yt.getInfo(url, (err, info) => {
 			if(err) return msg.channel.sendMessage('Invalid YouTube Link: ' + err);
 			if (!queue.hasOwnProperty(msg.guild.id)) queue[msg.guild.id] = {}, queue[msg.guild.id].playing = false, queue[msg.guild.id].songs = [];
 			queue[msg.guild.id].songs.push({url: url, title: info.title, requester: msg.author.username});
 			msg.channel.sendMessage(`added **${info.title}** to the queue`);
 		});
-    if()
   }
-
-  if(msg.content == 'c.queue') {
+}
+  if(msg.content === 'c.queue') {
     if (queue[msg.guild.id] === undefined) return msg.channel.sendMessage(`Add some songs to the queue first with c.add`);
 		let tosend = [];
 		queue[msg.guild.id].songs.forEach((song, i) => { tosend.push(`${i+1}. ${song.title} - Requested by: ${song.requester}`);});
 		msg.channel.sendMessage(`__**${msg.guild.name}'s Music Queue:**__ Currently **${tosend.length}** songs queued ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
 }
+  if(msg.content === 'c.skipAll') {
+    queue = {};
+    msg.channel.sendMessage(`removed all songs from playlist`);
+  }
 });
 client.login('NDUxNDQ5MzcwNjY4MTcxMjg1.DfB-LQ.oghQRVZw9zB6whsxKNAvRS-Mgs4');
