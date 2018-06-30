@@ -54,17 +54,7 @@ let dispatcher;
   if(msg.content ==='c.play' && playable === true) {
 
     if (queue[msg.guild.id] === undefined) return msg.channel.sendMessage(`Add some songs to the queue first with c.add`);
-    if (msg.member.voiceChannel) {
-      msg.member.voiceChannel.join
-        .then(connection => { // Connection is an instance of VoiceConnection
-          msg.reply('I have successfully connected to the channel!');
-          playable = true;
-        })
-        .catch(console.log);
-    } else {
-      msg.reply('You need to join a voice channel first!');
-    }
-		if (!msg.guild.voiceConnection) return commands.join(msg).then(() => commands.play(msg));
+		if (!msg.guild.voiceConnection) return msg.member.voiceChannel.join().then(() => commands.play(msg));
 		if (queue[msg.guild.id].playing) return msg.channel.sendMessage('Already Playing');
 		queue[msg.guild.id].playing = true;
 
