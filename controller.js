@@ -2,11 +2,12 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const yt = require('ytdl-core');
 const ytpl = require('ytpl');
+const tokens = require('./tokens.json');
 var SpotifyWebApi = require('spotify-web-api-node');
 // credentials are optional
 var spotifyApi = new SpotifyWebApi({
-  clientId: 'aaf71c64462a4b94852079feb6d2db91',
-  clientSecret: 'aaecd5df54fe46b5932cc4107bbfb9c0'
+  clientId: tokens.spotify_clientId,
+  clientSecret: tokens.spotify_clientSecret
 });
 spotifyApi.clientCredentialsGrant().then(
 function(data) {
@@ -149,4 +150,4 @@ let dispatcher;
     msg.channel.sendMessage(`removed all songs from playlist`);
   }
 });
-client.login('NDUxNDQ5MzcwNjY4MTcxMjg1.DfB-LQ.oghQRVZw9zB6whsxKNAvRS-Mgs4');
+client.login(tokens.dis_id);
