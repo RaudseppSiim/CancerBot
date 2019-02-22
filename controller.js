@@ -130,7 +130,7 @@ let dispatcher;
         	msg.channel.sendMessage("added "+ songscount.toString() +" songs to the queue");
       });
     }
-    else {
+    if(url.includes("v=")===true) {
 		yt.getInfo(url, (err, info) => {
 			if(err) return msg.channel.sendMessage('Invalid YouTube Link: ' + err);
 			if (!queue.hasOwnProperty(msg.guild.id)) queue[msg.guild.id] = {}, queue[msg.guild.id].playing = false, queue[msg.guild.id].songs = [];
