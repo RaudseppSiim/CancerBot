@@ -3,24 +3,26 @@ const client = new Discord.Client();
 const yt = require('ytdl-core');
 const ytpl = require('ytpl');
 const tokens = require('./tokens.json');
+const ytsearch = require('youtube-search');
 var SpotifyWebApi = require('spotify-web-api-node');
 // credentials are optional
-var spotifyApi = new SpotifyWebApi({
-  clientId: tokens.spotify_clientId,
-  clientSecret: tokens.spotify_clientSecret
-});
-spotifyApi.clientCredentialsGrant().then(
-function(data) {
-console.log(data.body);
-spotifyApi.setAccessToken(data.body['access_token']);
-},
-function(err) {
-console.log('Something went wrong!', err);
-}
-);
-console.log(spotifyApi);
+// var spotifyApi = new SpotifyWebApi({
+//   clientId: tokens.spotify_clientId,
+//   clientSecret: tokens.spotify_clientSecret
+// });
+// spotifyApi.clientCredentialsGrant().then(
+// function(data) {
+// console.log(data.body);
+// spotifyApi.setAccessToken(data.body['access_token']);
+// },
+// function(err) {
+// console.log('Something went wrong!', err);
+// }
+// );
+// console.log(spotifyApi);
 var playable = false;
 let queue = {};
+var opts = { maxResults: 10, key: tokens.YoutubeAPI };
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -116,6 +118,7 @@ let dispatcher;
       ytpl(url, function(err,playlist) {
         if(err) console.log(err);
         console.log(playlist);
+        /*
         for (var i = 0; i < playlist.total_items; i++) {
           console.log(playlist.items[i]);
           var iurl = playlist.items[i].url_simple;
@@ -128,7 +131,29 @@ let dispatcher;
       		});
         }
         	msg.channel.sendMessage("added "+ songscount.toString() +" songs to the queue");
+          */
       });
+    }
+    if(url.includes("https://www.youtube.com")===false&&url.includes("spotify:")===false)
+    {
+
+      ytsearch(url,opts,function(err, results) {
+  if(err) return console.log(err);
+
+  for (var i = 0; i < 10; i++)
+  {
+    if(results.id[i].kind=='youtube#video'){
+      var iurl= results.id[i].link;
+      yt.getInfo(iurl, (err, info) => {
+        if(err) return msg.channel.sendMessage('Invalid YouTube Link: ' + err);
+        if (!queue.hasOwnProperty(msg.guild.id)) queue[msg.guild.id] = {}, queue[msg.guild.id].playing = false, queue[msg.guild.id].songs = [];
+  			queue[msg.guild.id].songs.push({url: iurl, title: info.title, requester: msg.author.username});
+  			msg.channel.sendMessage(`added **${info.title}** to the queue`);
+      });
+      return;
+    }
+  }
+});
     }
     else {
 		yt.getInfo(url, (err, info) => {
